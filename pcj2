@@ -1,0 +1,99 @@
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <cmath>
+
+using namespace std;
+
+int main()
+{
+    double **mat,*bb,*xx,*xo,*cc,err1 = 1e-5; //xo=j, xx=g
+    int i,j,k,it = 0;
+    double a1,b1,e1,w=1.5;
+    ifstream fin;
+    fin.open("input.txt");
+
+
+    fin >> k;
+    mat = new double*[k];
+    for(i = 0; i < k; i++)
+    mat[i] = new double[k];
+
+    bb = new double[k];
+    xx = new double[k];
+    xo = new double[k];
+    cc = new double[k];
+
+    for(i = 0; i < k; i++)
+        for(j = 0; j < k; j++)
+            fin >> mat[i][j];
+
+    for(i = 0; i < k; i++)
+        fin >> bb[i];
+
+    fin.close();
+    for(i = 0; i < k; i++){
+        for(j = 0; j < k; j++)
+            cout << mat[i][j] <<' ';
+
+            cout << endl;
+    }
+
+    for(i = 0; i < k; i++)
+        cout << bb[i] << endl;
+
+    for(i = 0; i < k; i++) {
+        xx[i] = 1.;
+    }
+
+
+    do{
+
+        for(i = 0; i < k; i++)
+            xo[i] = xx[i];
+
+            for(i = 0; i < k; i++){
+                a1 = 0.;
+            for(j = 0; j < i; j++)
+                a1 += mat[i][j] * xx[j];
+
+                b1 = 0.;
+            for(j = i+1; j < k; j++)
+                b1 += mat[i][j] * xx[j];
+
+            xx[i] = (bb[i]-a1-b1)/mat[i][i];
+
+            }
+            for(i=0;i<k;i++)
+                xx[i]= w*xx[i] + (1-w)*xo[i];
+
+                e1 = 0.;
+            for(i = 0; i < k; i++)
+                if (e1 < fabs((xx[i]-xo[i])/xx[i]))
+                    e1 = fabs((xx[i]-xo[i])/xx[i]);
+            it++;
+
+                cout << "iteration = " << it << "  err=%e"<<e1<< endl;
+
+    }while(e1 > err1);
+        for(i = 0; i < k; i++)
+            cout << xx[i] << endl;
+
+          for(i=0;i<k;i++)
+            cc[i]=0.;
+
+            for(i=0;i<k;i++)
+                for(j=0;j<k;j++)
+                   cc[i]+=mat[i][j]*xx[j];
+
+
+         for(i = 0; i < k; i++)
+        cout << bb[i] << "  " << cc[i] << endl;
+
+
+    return 0;
+
+}
+
+
+
